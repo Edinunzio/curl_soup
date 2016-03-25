@@ -24,7 +24,10 @@ class CrawlerTest(TestCase):
 
     def test_to_csv(self):
         name = "Rick"
-        data = [[87120, "Rick", "Mon Sep 24, 2012 4:53 pm", r"Tonight, 8pm, might be worth a look...?\n\nRJ"]]
+        data = [
+            [87120, "Rick", "Mon Sep 24, 2012 4:53 pm", r"Tonight, 8pm, might be worth a look...?\n\nRJ"],
+            [871233, r'"Chuck"', r'"Mon Sep 23, 2012 4:53 pm"', r'"Tomorrow, 8pm, might be worth a look...?\n\nRJ"']
+        ]
         csv = self.crawler.to_csv(data, "forum")
         self.assertEqual(data, csv)
 
