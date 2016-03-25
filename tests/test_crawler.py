@@ -23,10 +23,16 @@ class CrawlerTest(TestCase):
         self.assertEqual(len(url_list), 8)
 
     def test_to_csv(self):
-        name = "Rick"
+        id_1 = 87120
+        id_2 = 871233
+        name_1 = "Rick"
+        name_2 = "Chuck"
+        date_1 = "Mon Sep 24, 2012 4:53 pm"
+        date_2 = "Mon Sep 23, 2012 4:53 pm"
+        msg = "Tonight, 8pm, might be worth a look...?\n\nRJ".encode('unicode_escape')
         data = [
-            [87120, "Rick", "Mon Sep 24, 2012 4:53 pm", r"Tonight, 8pm, might be worth a look...?\n\nRJ"],
-            [871233, r'"Chuck"', r'"Mon Sep 23, 2012 4:53 pm"', r'"Tomorrow, 8pm, might be worth a look...?\n\nRJ"']
+            [id_1, name_1, date_1, msg.decode("utf-8")],
+            [id_2, name_1, date_2, msg.decode("utf-8")]
         ]
         csv = self.crawler.to_csv(data, "forum")
         self.assertEqual(data, csv)

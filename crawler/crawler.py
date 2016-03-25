@@ -43,7 +43,7 @@ class Crawler(object):
 
     def to_csv(self, posts, name):
         f = open('forum.csv', 'wt')
-        writer = csv.writer(f, delimiter=';', lineterminator='\r\n', quotechar = "'")
+        writer = csv.writer(f, delimiter=';', lineterminator='\r\n', quotechar = '"', quoting=csv.QUOTE_NONNUMERIC)
         for post in posts:
             writer.writerow(post)
         f.close()
