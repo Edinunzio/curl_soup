@@ -33,10 +33,24 @@ class Crawler(object):
         self.body = body.decode('iso-8859-1')
         return self.body
 
-    def get_pages(self, base_url):
-        return ['a', 'b', 'c', 'd']
+    def soupify(self, response):
+        return BeautifulSoup(response, 'html.parser')
+
+    def get_links(self, soup):
+        _links = soup.select('.gensmall a')
+        links =  set(link['href'] for link in _links)
+        return list(links)
+
+    def to_csv(self, posts, name):
+        f = open('forum.csv', 'wt')
+        writer = csv.writer(f, delimiter=';')
+        for post in posts:
+            writer.writerow(post)
+        f.close()
+        return posts
 
 """
+
 # row should look like:
 # 87120;"Rick";"Mon Sep 24, 2012 4:53 pm";"Tonight, 8pm, might be worth a look...?\n\nRJ"
 # fieldnames: 
@@ -44,7 +58,7 @@ class Crawler(object):
     * name
     * date of the post (in text form or as is)  
     * post body
-
+{"ID": 87120, "Name": "Rick", "Date": "Mon Sep 24, 2012 4:53 pm", "Content": "Tonight, 8pm, might be worth a look...?\n\nRJ"}
 fieldnames = ['ID', 'Name', 'Date', 'Content']
 
 def to_csv(scraped, name):
