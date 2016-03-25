@@ -21,6 +21,8 @@ class Crawler(object):
         self.crl = pycurl.Curl()
         self.base_url = 'http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/viewtopic.php?t=12591'
         self.fieldnames = ['ID', 'Name', 'Date', 'Content']
+        self.posts = []
+        self.post = []
 
 
     def get_request(self, url):
@@ -41,11 +43,32 @@ class Crawler(object):
         links =  set(link['href'] for link in _links)
         return list(links)
 
+    def get_post_id_list(self, soup):
+        _post_ids = soup.select('.forumline .name a')
+        return [int(_id['name']) for _id in _post_ids]
+
+
+    def get_starting_post_id(self, soup):
+        _post_id = soup.select('.forumline .name')
+        post_id = _post_id[0].a['name']
+        return int(post_id)
+
+    def get_user_by_post_id(self, soup, post_id):
+        _post_id = soup.select('.forumline .name')
+        name = _post_id[0].a.next_element.text
+        return name
+
+    def get_posts(self, soup):
+        _posts = soup.select('table.forumline table')
+        posts = [post.find_parent('tr') for post in _posts]
+
+        return [_posts]
+
     def to_csv(self, posts, name):
         f = open('forum.csv', 'wt')
         writer = csv.writer(f, delimiter=';', lineterminator='\r\n', quotechar = '"', quoting=csv.QUOTE_NONNUMERIC)
         for post in posts:
-            writer.writerow(post)
+            writer.writerow([post[0], post[1], post[2], post[3].decode('utf-8')])
         f.close()
         return posts
 
