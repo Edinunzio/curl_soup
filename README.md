@@ -1,1 +1,1 @@
-Python 3 web scraper using pycurl and beautful soup. 
+Python 3 web scraper using pycurl and beautiful soup. 

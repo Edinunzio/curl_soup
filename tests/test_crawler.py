@@ -1,5 +1,5 @@
 from unittest import TestCase
-from crawler import Crawler
+from crawler.crawler import Crawler
 
 class CrawlerTest(TestCase):
     def setUp(self):
