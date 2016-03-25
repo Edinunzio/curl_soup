@@ -1,0 +1,5 @@
+beautifulsoup4==4.4.1
+py==1.4.31
+pycurl==7.43.0
+pytest==2.9.1
+test-pkg==0.0
