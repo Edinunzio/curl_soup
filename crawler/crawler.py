@@ -53,12 +53,13 @@ class Crawler(object):
             if tag['name']== str(post_id):
                 return tag
 
-    def get_user_by_post_id(self, tag, post_id):
+    def get_user_by_post_id(self, tag):
         name = tag.next_element.text
         return name
 
-    #def get_post_date(self, soup, post_id):
-        #_post_id = soup.select('.forumline .name')
+    def get_post_date(self, tag):
+        post_date = tag.previous_element.previous_element.find_next_sibling('td').span.contents
+        return post_date[0].strip('Posted: ')
 
     def to_csv(self, posts, name):
         f = open('forum.csv', 'wt')
