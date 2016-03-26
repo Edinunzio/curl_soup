@@ -66,6 +66,14 @@ class Crawler(object):
         msg = post_msg.text.split('_________________')
         return msg[0]
 
+    def build_post_data(self, soup, post_id):
+        tag = self.get_tag_by_id(soup, post_id)
+        name = self.get_user_by_post_id(tag)
+        post_date = self.get_post_date(tag)
+        msg = self.get_post_msg(tag)
+        # debug encoding for msg \r\n
+        return [post_id, name, post_date, msg]
+
     def to_csv(self, posts, name):
         f = open('forum.csv', 'wt')
         writer = csv.writer(f, delimiter=';', lineterminator='\r\n', quotechar = '"', quoting=csv.QUOTE_NONNUMERIC)

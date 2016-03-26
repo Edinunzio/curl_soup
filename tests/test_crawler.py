@@ -70,13 +70,11 @@ class CrawlerTest(TestCase):
         self.assertIn("Oh dear! Just switched off", post_msg_2)
         self.assertNotIn("_________________", post_msg_2)
 
-    """def test_replace_br_with_newline(self):
+    def test_build_post_data(self):
         page = self.crawler.get_request(self.base_url)
         soup = self.crawler.soupify(page)
-        tag = self.crawler.get_tag_by_id(soup, 87120)
-        post_date = self.crawler.get_post_date(tag)
-        post_msg = self.crawler.get_post_msg(tag)
-    """
+        data = self.crawler.build_post_data(soup, 87120)
+        self.assertEqual(data[0:3], [87120, "Rick", "Mon Sep 24, 2012 4:53 pm"])
 
     def test_to_csv(self):
         id_1 = 87120
@@ -88,7 +86,7 @@ class CrawlerTest(TestCase):
         msg = "Tonight, 8pm, might be worth a look...?\n\nRJ".encode('unicode_escape')
         data = [
             [id_1, name_1, date_1, msg],
-            [id_2, name_1, date_2, msg]
+            [id_2, name_2, date_2, msg]
         ]
         csv = self.crawler.to_csv(data, "forum")
         self.assertEqual(data, csv)
