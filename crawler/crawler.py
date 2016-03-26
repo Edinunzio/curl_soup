@@ -47,10 +47,18 @@ class Crawler(object):
         _post_ids = soup.select('.forumline .name a')
         return [int(_id['name']) for _id in _post_ids]
 
-    def get_user_by_post_id(self, soup, post_id):
-        _post_id = soup.select('.forumline .name')
-        name = _post_id[0].a.next_element.text
+    def get_post_by_id(self, soup, post_id):
+        tags = soup.select('.forumline .name a')
+        for tag in tags:
+            if tag['name']== str(post_id):
+                return tag
+
+    def get_user_by_post_id(self, tag, post_id):
+        name = tag.next_element.text
         return name
+
+    #def get_post_date(self, soup, post_id):
+        #_post_id = soup.select('.forumline .name')
 
     def to_csv(self, posts, name):
         f = open('forum.csv', 'wt')
