@@ -1,4 +1,6 @@
-# Python 3 web scraper using pycurl and beautiful soup. 
+# Python 3 web scraper 
+
+Using pycurl and beautiful soup. 
 
 
 ### Install requirements
