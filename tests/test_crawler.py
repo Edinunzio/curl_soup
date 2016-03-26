@@ -79,12 +79,10 @@ class CrawlerTest(TestCase):
         self.assertIn("i wouldn't bother", post_msg)
 
     def test_build_post_data(self):
-        # debug the encoding issue with the msg re \r\n
         page = self.crawler.get_request(self.base_url)
         soup = self.crawler.soupify(page)
         data = self.crawler.build_post_data(soup, 87120)
-        self.assertEqual(data[0:3], [87120, "Rick", "Mon Sep 24, 2012 4:53 pm"])#, "Tonight, 8pm, might be worth a look...?\n\nRJ"])
-        #self.assertEqual(data, [87120, "Rick", "Mon Sep 24, 2012 4:53 pm", "Tonight, 8pm, might be worth a look...?\n\nRJ"])
+        self.assertEqual(data[0:3], [87120, "Rick", "Mon Sep 24, 2012 4:53 pm"])
 
     def test_to_csv(self):
         id_1 = 87120
@@ -98,6 +96,5 @@ class CrawlerTest(TestCase):
             [id_1, name_1, date_1, msg],
             [id_2, name_2, date_2, msg]
         ]
-        csv = self.crawler.to_csv(data, "forum")
+        csv = self.crawler.to_csv(data, "test_forum")
         self.assertEqual(data, csv)
-
