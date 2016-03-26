@@ -70,11 +70,21 @@ class CrawlerTest(TestCase):
         self.assertIn("Oh dear! Just switched off", post_msg_2)
         self.assertNotIn("_________________", post_msg_2)
 
+    def test_gets_next_msg_span_if_empty(self):
+        page = self.crawler.get_request('http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/viewtopic.php?t=12591')
+        soup = self.crawler.soupify(page)
+        tag = self.crawler.get_tag_by_id(soup, 87140)
+        post_msg = self.crawler.get_post_msg(tag)
+        self.assertIs(type(post_msg), str)
+        self.assertIn("i wouldn't bother", post_msg)
+
     def test_build_post_data(self):
+        # debug the encoding issue with the msg re \r\n
         page = self.crawler.get_request(self.base_url)
         soup = self.crawler.soupify(page)
         data = self.crawler.build_post_data(soup, 87120)
-        self.assertEqual(data[0:3], [87120, "Rick", "Mon Sep 24, 2012 4:53 pm"])
+        self.assertEqual(data[0:3], [87120, "Rick", "Mon Sep 24, 2012 4:53 pm"])#, "Tonight, 8pm, might be worth a look...?\n\nRJ"])
+        #self.assertEqual(data, [87120, "Rick", "Mon Sep 24, 2012 4:53 pm", "Tonight, 8pm, might be worth a look...?\n\nRJ"])
 
     def test_to_csv(self):
         id_1 = 87120

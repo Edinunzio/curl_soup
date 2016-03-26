@@ -17,8 +17,6 @@ An example of a single post in that file should look like the following:
 
 class Crawler(object):
     def __init__(self):
-        self.buffer = BytesIO()
-        self.crl = pycurl.Curl()
         self.base_url = 'http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/viewtopic.php?t=12591'
         self.fieldnames = ['ID', 'Name', 'Date', 'Content']
         self.posts = []
@@ -26,6 +24,8 @@ class Crawler(object):
 
 
     def get_request(self, url):
+        self.buffer = BytesIO()
+        self.crl = pycurl.Curl()
         self.crl.setopt(self.crl.URL, url)
         self.crl.setopt(self.crl.WRITEDATA, self.buffer)
         self.crl.perform()
@@ -63,6 +63,9 @@ class Crawler(object):
 
     def get_post_msg(self, tag):
         post_msg = tag.previous_element.previous_element.find_next_sibling('td').table.tr.find_next_sibling('tr').find_next_sibling('tr').span
+        #if post_msg.text == '':
+        #    post_msg = post_msg.previous_element.text
+        #    return post_msg
         msg = post_msg.text.split('_________________')
         return msg[0]
 
@@ -72,7 +75,7 @@ class Crawler(object):
         post_date = self.get_post_date(tag)
         msg = self.get_post_msg(tag)
         # debug encoding for msg \r\n
-        return [post_id, name, post_date, msg]
+        return [post_id, name, post_date, msg.encode('unicode_escape')]
 
     def to_csv(self, posts, name):
         f = open('forum.csv', 'wt')
@@ -81,6 +84,43 @@ class Crawler(object):
             writer.writerow([post[0], post[1], post[2], post[3].decode('utf-8')])
         f.close()
         return posts
+
+    def crawl_thread(self):
+        crawls = []
+        response = self.get_request(self.base_url)
+        init_soup = self.soupify(response)
+        links = self.get_links(init_soup)
+        init_post_ids = self.get_post_id_list(init_soup)
+        for _id in init_post_ids:
+            crawls.append(self.build_post_data(init_soup, _id))
+        for link in links:
+            _response = self.get_request(link)
+            _soup = self.soupify(_response)
+            _post_ids = self.get_post_id_list(_soup)
+            for _post_id in post_ids:
+                crawls.append(self.build_post_data(_soup, _post_id))
+        self.to_csv(crawls, 'forum')
+        
+        #return crawls
+
+       
+
+c = Crawler()
+crawls = []
+response = c.get_request('http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/viewtopic.php?t=12591')
+init_soup = c.soupify(response)
+links = c.get_links(init_soup)
+init_post_ids = c.get_post_id_list(init_soup)
+for _id in init_post_ids:
+    crawls.append(c.build_post_data(init_soup, _id))
+for link in links:
+    _response = c.get_request('http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/'+link)
+    _soup = c.soupify(_response)
+    _post_ids = c.get_post_id_list(_soup)
+    for _post_id in _post_ids:
+        crawls.append(c.build_post_data(_soup, _post_id))
+c.to_csv(crawls, 'forum')
+
 
 """
 
