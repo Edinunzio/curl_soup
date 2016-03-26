@@ -39,7 +39,6 @@ class Crawler(object):
         return BeautifulSoup(response, 'html.parser')
 
     def get_links(self, soup):
-        #click next instead
         _links = soup.select('.gensmall a')
         links =  [link['href'] for link in _links]
         return list(links[:-1])
@@ -65,10 +64,11 @@ class Crawler(object):
     def get_post_msg(self, tag):
         post_msg = tag.previous_element.previous_element.find_next_sibling('td').table.tr.find_next_sibling('tr').find_next_sibling('tr').span
         if post_msg.text == '':
-            tag.previous_element.previous_element.find_next_sibling('td').table.tr.find_next_sibling('tr').find_next_sibling('tr').td.text
-            return post_msg
-        msg = post_msg.text.split('_________________')
-        return msg[0]
+            post_msg = tag.previous_element.previous_element.find_next_sibling('td').table.tr.find_next_sibling('tr').find_next_sibling('tr')
+            post_msg = post_msg.text.split('_________________')
+            return post_msg[0]
+        post_msg = post_msg.text.split('_________________')
+        return post_msg[0]
 
     def build_post_data(self, soup, post_id):
         tag = self.get_tag_by_id(soup, post_id)
@@ -101,8 +101,6 @@ class Crawler(object):
             for _post_id in post_ids:
                 crawls.append(self.build_post_data(_soup, _post_id))
         self.to_csv(crawls, 'forum')
-        
-        #return crawls
 
        
 
@@ -115,7 +113,6 @@ init_post_ids = c.get_post_id_list(init_soup)
 for _id in init_post_ids:
     crawls.append(c.build_post_data(init_soup, _id))
 for link in links:
-    print(link)
     _response = c.get_request('http://www.oldclassiccar.co.uk/forum/phpbb/phpBB2/'+link)
     _soup = c.soupify(_response)
     _post_ids = c.get_post_id_list(_soup)
